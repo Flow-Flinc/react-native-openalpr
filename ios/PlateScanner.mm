@@ -30,7 +30,7 @@ static PlateScanner *scanner;
           [[[NSBundle mainBundle] pathForResource:@"openalpr.conf" ofType:nil] UTF8String],
           [[[NSBundle mainBundle] pathForResource:@"runtime_data" ofType:nil] UTF8String]
         );
-        delegate->setTopN(1);
+        delegate->setTopN(2);
         
         if (delegate->isLoaded() == false) {
             NSLog(@"Error initializing OpenALPR library");
@@ -63,7 +63,17 @@ static PlateScanner *scanner;
         alpr::AlprPlateResult alprResult = alprResults.plates[0];
         
         PlateResult *plate = [PlateResult new];
-        plate.plate = @(alprResult.bestPlate.characters.c_str());
+        //plate.plate = @(alprResult.bestPlate.characters.c_str());
+        plate.plate = [NSMutableString stringWithString:@""];
+        
+        for (int j = 0; j < alprResult.topNPlates.size(); j++) {
+            if(j != 0) {
+                [plate.plate appendString:@","];
+            }
+            NSMutableString *currentPlate = [NSMutableString stringWithString:@(alprResult.topNPlates[j].characters.c_str())];
+            [plate.plate appendString:currentPlate];
+        }
+        
         plate.confidence = alprResult.bestPlate.overall_confidence;
         
         plate.rows = colorImage.rows;
