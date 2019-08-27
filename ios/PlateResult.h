@@ -10,7 +10,7 @@
 
 @interface PlateResult : NSObject
 
-@property (nonatomic, strong) NSString *plate;
+@property (nonatomic, strong) NSMutableString *plate;
 @property (nonatomic, strong) NSArray *points;
 @property (nonatomic) float confidence;
 @property (nonatomic) int cols;
