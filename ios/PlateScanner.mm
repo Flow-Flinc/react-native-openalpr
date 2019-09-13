@@ -57,42 +57,43 @@ static PlateScanner *scanner;
     }
     
     std::vector<alpr::AlprRegionOfInterest> regionsOfInterest;
-    alpr::AlprResults alprResults = delegate->recognize(colorImage.data, (int)colorImage.elemSize(), colorImage.cols, colorImage.rows, regionsOfInterest);
-    
-    if (alprResults.plates.size() > 0) {
-        alpr::AlprPlateResult alprResult = alprResults.plates[0];
-        
-        PlateResult *plate = [PlateResult new];
-        //plate.plate = @(alprResult.bestPlate.characters.c_str());
-        plate.plate = [NSMutableString stringWithString:@""];
-        
-        for (int j = 0; j < alprResult.topNPlates.size(); j++) {
-            if(j != 0) {
-                [plate.plate appendString:@","];
-            }
-            NSMutableString *currentPlate = [NSMutableString stringWithString:@(alprResult.topNPlates[j].characters.c_str())];
-            [plate.plate appendString:currentPlate];
-        }
-        
-        plate.confidence = alprResult.bestPlate.overall_confidence;
-        
-        plate.rows = colorImage.rows;
-        plate.cols = colorImage.cols;
-        
-        NSMutableArray *pointsArr = [NSMutableArray array];
-        for (int j = 0; j < 4; j++) {
-            [pointsArr addObject:[NSValue valueWithCGPoint:CGPointMake(alprResult.plate_points[j].x, alprResult.plate_points[j].y)]];
-        }
-        plate.points = pointsArr;
-        
-        // NSLog(@"\n\n\ncols: %d\nrows: %d\npoint0.x: %d\npoint0.y: %d", colorImage.cols, colorImage.rows, alprResult.plate_points[0].x,
-        //   alprResult.plate_points[0].y);
+    if(!regionsOfInterest.empty()) {
+        alpr::AlprResults alprResults = delegate->recognize(colorImage.data, (int)colorImage.elemSize(), colorImage.cols, colorImage.rows, regionsOfInterest);
 
-        success(plate);
-    } else {
-        success(nil);
+        if (alprResults.plates.size() > 0) {
+            alpr::AlprPlateResult alprResult = alprResults.plates[0];
+
+            PlateResult *plate = [PlateResult new];
+            //plate.plate = @(alprResult.bestPlate.characters.c_str());
+            plate.plate = [NSMutableString stringWithString:@""];
+
+            for (int j = 0; j < alprResult.topNPlates.size(); j++) {
+                if(j != 0) {
+                    [plate.plate appendString:@","];
+                }
+                NSMutableString *currentPlate = [NSMutableString stringWithString:@(alprResult.topNPlates[j].characters.c_str())];
+                [plate.plate appendString:currentPlate];
+            }
+
+            plate.confidence = alprResult.bestPlate.overall_confidence;
+
+            plate.rows = colorImage.rows;
+            plate.cols = colorImage.cols;
+
+            NSMutableArray *pointsArr = [NSMutableArray array];
+            for (int j = 0; j < 4; j++) {
+                [pointsArr addObject:[NSValue valueWithCGPoint:CGPointMake(alprResult.plate_points[j].x, alprResult.plate_points[j].y)]];
+            }
+            plate.points = pointsArr;
+
+            // NSLog(@"\n\n\ncols: %d\nrows: %d\npoint0.x: %d\npoint0.y: %d", colorImage.cols, colorImage.rows, alprResult.plate_points[0].x,
+            //   alprResult.plate_points[0].y);
+
+            success(plate);
+        } else {
+            success(nil);
+        }
     }
-    
     
 }
 
