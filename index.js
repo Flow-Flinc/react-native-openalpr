@@ -48,7 +48,7 @@ export default class Camera extends Component {
   static defaultProps = {
     aspect: CameraManager.Aspect.fill,
     captureQuality: CameraManager.CaptureQuality.medium,
-    country: 'eu',
+    country: 'us',
     plateOutlineColor: '#0028ff',
     showPlateOutline: true,
     torchMode: CameraManager.TorchMode.off,
@@ -75,7 +75,7 @@ export default class Camera extends Component {
   };
 
   async componentWillMount() {
-    const check = Camera.checkVideoAuthorizationStatus;
+    let check = Camera.checkVideoAuthorizationStatus;
 
     if (check) {
       const isAuthorized = await check();

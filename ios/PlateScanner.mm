@@ -58,12 +58,6 @@ static PlateScanner *scanner;
     
     std::vector<alpr::AlprRegionOfInterest> regionsOfInterest;
 
-    // GECA Unstable Fix for app crashing of license plate scanning
-    if(regionsOfInterest.empty()) {
-        alpr::AlprRegionOfInterest startRegion = alpr::AlprRegionOfInterest(1,1, colorImage.rows, colorImage.cols);
-        regionsOfInterest.push_back(startRegion);
-    }
-
     alpr::AlprResults alprResults = delegate->recognize(colorImage.data, (int)colorImage.elemSize(), colorImage.cols, colorImage.rows, regionsOfInterest);
 
     if (alprResults.plates.size() > 0) {
